@@ -90,6 +90,7 @@ fn check_listing_value(sale: &Sale) -> String {
     let item = sale.clone();
     let item_name = item.market_name;
     let list_price_in_pounds = item.sale_price as f64 / 100.0;
+    let item_stickers = item.stickers;
 
     if list_price_in_pounds < MINIMUM_PRICE {
         // println!("{} is below the minimum price of £{}.", item_name, MINIMUM_PRICE);
@@ -99,6 +100,23 @@ fn check_listing_value(sale: &Sale) -> String {
     let suggested_price_in_pounds = item.suggested_price as f64 / 100.0;
     let skinport_link = format!("https://skinport.com/item/{}/{}", item.url, item.sale_id);
     let should_buy = should_purchase(sale.clone());
+    let mut kato_stickers: Vec<String> = Vec::new();
+
+    if !item_stickers.is_empty() {
+        item_stickers.iter().for_each(|StickerData| {
+            let sticker_name = StickerData.clone().name;
+            if IMPORTANT_STICKERS.contains(sticker_name.as_str) {
+                kato_stickers.push(sticker_name);
+            }
+        });
+        let mut sticker_string: String;
+        for x in kato_stickers {
+            sticker_string = format!("{}\n{}",sticker_string,x);
+        }
+        let msg = format!("[!] KATO/VALUABLE STICKERS: {}\n[$] Item: `{}`\nListed Price: `£{}`\nSuggested Price: `£{}`\nPercentage: `%{}`\nLink: {}\n", sticker_string, item_name, list_price_in_pounds, suggested_price_in_pounds, should_buy, skinport_link);
+        return msg;
+    }
+
     if should_buy != String::from("") {
         let msg = format!("[$] Item: `{}`\nListed Price: `£{}`\nSuggested Price: `£{}`\nPercentage: `%{}`\nLink: {}\n", item_name, list_price_in_pounds, suggested_price_in_pounds, should_buy, skinport_link);
         return msg;
@@ -112,6 +130,7 @@ fn should_purchase(item: Sale) -> String {
     let listed_price = item.sale_price;
     let suggested_price = item.suggested_price;
     let item_category = item.category;
+    //let item_stickers = item.stickers;
 
     if IMPORTANT_CATEGORIES.contains(&item_category.as_str()) && (listed_price as f64 / 100.0) <= 100.0 && (suggested_price as f64 / 100.0) > 200.0 {
         return "BIG%WTFBUYITLOSER".to_string();
@@ -122,5 +141,5 @@ fn should_purchase(item: Sale) -> String {
         return percent_off.to_string();
     }
 
-    "".to_string()
+    "".to_string() // No cracked price, No %<%lim
 }
