@@ -11,6 +11,41 @@ lazy_static! {
 const MINIMUM_PRICE: f64 = 15.0;
 const PERCENTAGE_LIMIT: f64 = 75.0;
 const IMPORTANT_CATEGORIES: &[&str] = &["Knife", "Gloves"];
+const IMPORTANT_STICKERS: &[&str] = &[
+    // "Eternal Fire | Antwerp 2022", // Example
+    "Titan | Katowice 2014",
+    "Titan (Holo) | Katowice 2014",
+    "iBUYPOWER | Katowice 2014",
+    "iBUYPOWER (Holo) | Katowice 2014",
+    "Fnatic | Katowice 2014",
+    "Fnatic (Holo) | Katowice 2014",
+    "Reason Gaming | Katowice 2014",
+    "Reason Gaming (Holo) | Katowice 2014",
+    "Natus Vincere | Katowice 2014",
+    "Natus Vincere (Holo) | Katowice 2014",
+    "compLexity Gaming | Katowice 2014",
+    "compLexity Gaming (Holo) | Katowice 2014",
+    "Ninjas in Pyjamas | Katowice 2014",
+    "Ninjas in Pyjamas (Holo) | Katowice 2014",
+    "Virtus.Pro | Katowice 2014",
+    "Virtus.Pro (Holo) | Katowice 2014",
+    "Clan-Mystik | Katowice 2014",
+    "Clan-Mystik (Holo) | Katowice 2014",
+    "3DMAX | Katowice 2014",
+    "3DMAX (Holo) | Katowice 2014",
+    "mousesports | Katowice 2014",
+    "mousesports (Holo) | Katowice 2014",
+    "Vox Eminor | Katowice 2014",
+    "Vox Eminor (Holo) | Katowice 2014",
+    "Team Dignitas | Katowice 2014",
+    "Team Dignitas (Holo) | Katowice 2014",
+    "HellRaisers | Katowice 2014",
+    "HellRaisers (Holo) | Katowice 2014",
+    "Team LDLC.com | Katowice 2014",
+    "Team LDLC.com (Holo) | Katowice 2014",
+    "LGB eSports | Katowice 2014",
+    "LGB eSports (Holo) | Katowice 2014"
+];
 
 fn log_to_webhook(message: String) {
     let binding = CONFIG.discord.role_id.clone();
