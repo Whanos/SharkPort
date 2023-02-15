@@ -104,9 +104,12 @@ fn check_listing_value(sale: &Sale) -> String {
     if !item_stickers.is_empty() {
         let kato_stickers: Vec<String>;
         kato_stickers = item_stickers.iter().filter(|sticker | IMPORTANT_STICKERS.contains(&&*sticker.name)).map(|stick | stick.clone().name).collect();
-        let sticker_string = kato_stickers.join("\n");
-        let msg = format!("[!] KATO/VALUABLE STICKERS: {}\n[$] Item: `{}`\nListed Price: `£{}`\nSuggested Price: `£{}`\nPercentage: `%{}`\nLink: {}\n", sticker_string, item_name, list_price_in_pounds, suggested_price_in_pounds, should_buy, skinport_link);
-        return msg;
+        if !kato_stickers.is_empty() {
+            let sticker_string = kato_stickers.join("\n");
+            let msg = format!("[!] KATO/VALUABLE STICKERS: {}\n[$] Item: `{}`\nListed Price: `£{}`\nSuggested Price: `£{}`\nPercentage: `%{}`\nLink: {}\n", sticker_string, item_name, list_price_in_pounds, suggested_price_in_pounds, should_buy, skinport_link);
+            return msg;
+        }
+        return "".to_string();
     }
 
 /*    if !item_stickers.is_empty() {
