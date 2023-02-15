@@ -8,8 +8,8 @@ lazy_static! {
     static ref WEB_CLIENT: reqwest::blocking::Client = reqwest::blocking::Client::new();
 }
 
-const MINIMUM_PRICE: f64 = 10.0;
-const PERCENTAGE_LIMIT: f64 = 90.0;
+const MINIMUM_PRICE: f64 = 15.0;
+const PERCENTAGE_LIMIT: f64 = 75.0;
 const IMPORTANT_CATEGORIES: &[&str] = &["Knife", "Gloves"];
 
 fn log_to_webhook(message: String) {
@@ -64,8 +64,8 @@ fn check_listing_value(sale: &Sale) -> String {
     let suggested_price_in_pounds = item.suggested_price as f64 / 100.0;
     let skinport_link = format!("https://skinport.com/item/{}/{}", item.url, item.sale_id);
     let should_buy = should_purchase(sale.clone());
-    if should_buy {
-        let msg = format!("[$] Item: {}\nListed Price: £{}\nSuggested Price: £{}\nLink: {}\n", item_name, list_price_in_pounds, suggested_price_in_pounds, skinport_link);
+    if should_buy != String::from("") {
+        let msg = format!("[$] Item: `{}`\nListed Price: `£{}`\nSuggested Price: `£{}`\nPercentage: `%{}`\nLink: {}\n", item_name, list_price_in_pounds, suggested_price_in_pounds, should_buy, skinport_link);
         return msg;
     }
 
@@ -73,19 +73,19 @@ fn check_listing_value(sale: &Sale) -> String {
 }
 
 
-fn should_purchase(item: Sale) -> bool {
+fn should_purchase(item: Sale) -> String {
     let listed_price = item.sale_price;
     let suggested_price = item.suggested_price;
     let item_category = item.category;
 
-    if IMPORTANT_CATEGORIES.contains(&item_category.as_str()) && (listed_price as f64 / 100.0) <= 100.0 && (suggested_price as f64/ 100.0) > 200.0 {
-        return true;
+    if IMPORTANT_CATEGORIES.contains(&item_category.as_str()) && (listed_price as f64 / 100.0) <= 100.0 && (suggested_price as f64 / 100.0) > 200.0 {
+        return "BIG%WTFBUYITLOSER".to_string();
     }
 
     let percent_off = listed_price as f64 / suggested_price as f64 * 100.0;
     if percent_off <= PERCENTAGE_LIMIT {
-        return true;
+        return percent_off.to_string();
     }
 
-    false
+    "".to_string()
 }
