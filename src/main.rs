@@ -9,6 +9,9 @@ use url::Url;
 use crate::item_processor::process_new_listing;
 use std::time::Instant;
 
+macro_rules! debug_println {
+    ($($arg:tt)*) => (if ::std::cfg!(debug_assertions) { ::std::println!($($arg)*); })
+}
 
 fn main() {
     println!("SharkPort");
@@ -19,7 +22,7 @@ fn main() {
             .unwrap())
             .expect("Can't connect");
 
-    println!("Connected to the server");
+    debug_println!("Connected to the server");
 
     // begin message loop
     loop {
@@ -29,11 +32,11 @@ fn main() {
         match msg_code {
             "0" => {
                 // Send response
-                println!("S->C: Hello (0)");
+                debug_println!("S->C: Hello (0)");
                 socket.write_message(Message::Text("40".to_string())).unwrap(); // Reply handshake (40)
-                println!("C->S: ACK (40)");
+                debug_println!("C->S: ACK (40)");
                 socket.write_message(Message::Text("42[\"saleFeedJoin\",{\"appid\":730,\"currency\":\"GBP\",\"locale\":\"en\"}]".to_string())).unwrap(); // Send saleFeedJoin (42)
-                println!("C->S: saleFeedJoin (42)");
+                debug_println!("C->S: saleFeedJoin (42)");
             },
             "2" => {
                 // println!("S->C: Ping (2)");
@@ -43,7 +46,8 @@ fn main() {
             _ => {
                 // Server sent new listing
                 if msg.to_string().starts_with("42[\"saleFeed\",") {
-                    println!("S->C: New listing (42)");
+                    debug_println!("S->C: New listing (42)");
+                    debug_println!("{}", msg.to_string());
                     let mut trimmed_msg = msg.to_text().unwrap().replace("42[\"saleFeed\",", "");
                     trimmed_msg.pop().unwrap();
 
@@ -51,11 +55,11 @@ fn main() {
                     let start = Instant::now();
                     process_new_listing(trimmed_msg);
                     let duration = start.elapsed();
-                    println!("Time elapsed in process_new_listing() was: {} ns / {} ms", duration.as_nanos(), (duration.as_nanos() as f64) / 1000000.0);
+                    debug_println!("Time elapsed in process_new_listing() was: {} ns / {} ms", duration.as_nanos(), (duration.as_nanos() as f64) / 1000000.0);
                 }
                 else {
                     // Unknown message, log it.
-                    println!("Unknown message: {}", msg);
+                    debug_println!("Unknown message: {}", msg);
                 }
             }
         }

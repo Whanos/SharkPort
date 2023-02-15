@@ -57,7 +57,7 @@ pub struct Sale {
     pub stack_able: bool,
     pub stattrak: bool,
     pub steamid: String,
-    pub stickers: Vec<Value>,
+    pub stickers: Vec<Sticker>,
     pub sub_category: Value,
     #[serde(rename = "subCategory_localized")]
     pub sub_category_localized: Value,
@@ -71,6 +71,25 @@ pub struct Sale {
     pub version: String,
     pub version_type: String,
     pub wear: Value,
+}
+
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct Sticker {
+    pub color: Value,
+    pub img: String,
+    pub name: String,
+    #[serde(rename = "name_localized")]
+    pub name_localized: String,
+    pub slot: i64,
+    #[serde(rename = "sticker_id")]
+    pub sticker_id: Value,
+    #[serde(rename = "type")]
+    pub type_field: Value,
+    #[serde(rename = "type_localized")]
+    pub type_localized: Value,
+    pub value: Value,
+    pub wear: Option<f64>,
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
