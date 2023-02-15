@@ -39,9 +39,9 @@ fn main() {
                 debug_println!("C->S: saleFeedJoin (42)");
             },
             "2" => {
-                // println!("S->C: Ping (2)");
+                debug_println!("S->C: Ping (2)");
                 socket.write_message(Message::Text("3".to_string())).unwrap(); // Send pong (3)
-                // println!("C->S: Pong (3)");
+                debug_println!("C->S: Pong (3)");
             },
             _ => {
                 // Server sent new listing
