@@ -35,7 +35,7 @@ fn main() {
 
     let config = config::read_config();
 
-    disc_embed_webhook("farted");
+    //disc_embed_webhook("farted");
 
     let (mut socket, _response) =
         connect(Url::parse(&config.skinport.websocket_url)

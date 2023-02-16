@@ -2,6 +2,7 @@ use std::collections::HashMap;
 use crate::parse_json::{parse_listing, Sale};
 use lazy_static::lazy_static;
 use crate::config::Data;
+use serde_json::{Value, Map, Number};
 
 lazy_static! {
     static ref CONFIG: Data = crate::config::read_config();
@@ -65,25 +66,26 @@ fn log_to_webhook(message: String) {
 }
 
 pub(crate) fn disc_embed_webhook(mesag: &str) {
-    println!("FUCKERS IN THE ARYAN TRAPHOUSE!!!");
     let binding = CONFIG.discord.role_id.clone();
     let role_id = binding.as_str();
     let webhook = CONFIG.discord.skinport_url.clone();
     let skinport_url = webhook.as_str();
 
-    let raw_text_mention = format!("<@&.{}>", role_id);
+    let raw_text_mention = format!("<@&{}>", role_id);
 
-    let mut innermap = HashMap::new();
-    innermap.insert("description".to_string(),mesag.to_string());
-    innermap.insert("title".to_string(),"[$] Skin Notification".to_string());
+    let mut innermap = Map::new();
+    innermap.insert("description".to_string(),Value::String(mesag.to_string()));
+    innermap.insert("title".to_string(),Value::String("[$] Skin Notification".to_string()));
 
-    let mut map = HashMap::new();
-    map.insert("content".to_string(), raw_text_mention);
-    map.insert("username".to_string(), "Listing Tracker".to_string());
-    map.insert("avatar_url".to_string(),"https://i.kym-cdn.com/entries/icons/original/000/040/219/cover1.jpg".to_string());
-    // map.insert("embeds".to_string(), Value::Array(vec)); - wtf is this line?
+    let vec_of_embed_obj: Vec<Value> = vec![Value::Object(innermap)];
 
-    println!("FUCK 12: {}", serde_json::to_string(&map).unwrap());
+    let mut map = Map::new();
+    map.insert("content".to_string(), Value::String(raw_text_mention));
+    map.insert("username".to_string(), Value::String("Listing Tracker".to_string()));
+    map.insert("avatar_url".to_string(),Value::String("https://i.kym-cdn.com/entries/icons/original/000/040/219/cover1.jpg".to_string()));
+    map.insert("embeds".to_string(), Value::Array(vec_of_embed_obj));
+
+    //println!("FUCK 12: {}", serde_json::to_string(&map).unwrap());
 
     WEB_CLIENT.post(skinport_url)
         .json(&map)
