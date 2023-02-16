@@ -8,13 +8,31 @@ use tungstenite::{connect, Message};
 use url::Url;
 use crate::item_processor::process_new_listing;
 use std::time::Instant;
+use std::path::PathBuf;
+use std::fs;
+use chrono;
+use chrono::{Datelike, Timelike};
 
 macro_rules! debug_println {
     ($($arg:tt)*) => (if ::std::cfg!(debug_assertions) { ::std::println!($($arg)*); })
 }
 
+fn write_to_log(sale_json: String) {
+    let t = chrono::offset::Local::now();
+    let datetime_string = format!("{}-{}-{}+{}_{}_{}",t.year(),t.month(),t.day(),t.hour(),t.minute(),t.second());
+    let path_string = format!("logs/{}{}",datetime_string,".txt");
+    debug_println!("{}",path_string);
+    let path = PathBuf::from(path_string);
+    fs::write(path, sale_json)
+        .expect("Unable to write file");
+}
+
 fn main() {
     println!("SharkPort");
+    debug_println!("Date: {}",chrono::offset::Local::now());
+    debug_println!("Executed Path: {}",std::env::current_dir().expect("AAAAA").as_path().display().to_string());
+
+    //fs::create_dir("/logs").expect("hahha its fine :)");
     let config = config::read_config();
 
     let (mut socket, _response) =
@@ -48,6 +66,7 @@ fn main() {
                 if msg.to_string().starts_with("42[\"saleFeed\",") {
                     debug_println!("S->C: New listing (42)");
                     debug_println!("{}", msg.to_string());
+                    write_to_log(msg.to_string());
                     let mut trimmed_msg = msg.to_text().unwrap().replace("42[\"saleFeed\",", "");
                     trimmed_msg.pop().unwrap();
 
