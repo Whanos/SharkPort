@@ -2,6 +2,7 @@ use std::collections::HashMap;
 use crate::parse_json::{parse_listing, Sale};
 use lazy_static::lazy_static;
 use crate::config::Data;
+use serde_json::{Value, Map, Number};
 
 lazy_static! {
     static ref CONFIG: Data = crate::config::read_config();
@@ -9,7 +10,7 @@ lazy_static! {
 }
 
 const MINIMUM_PRICE: f64 = 15.0;
-const PERCENTAGE_LIMIT: f64 = 75.0;
+const PERCENTAGE_LIMIT: f64 = 80.0;
 const IMPORTANT_CATEGORIES: &[&str] = &["Knife", "Gloves"];
 const IMPORTANT_STICKERS: &[&str] = &[
     // "Eternal Fire | Antwerp 2022", // Example
@@ -64,6 +65,33 @@ fn log_to_webhook(message: String) {
         .expect("Unable to send message to webhook");
 }
 
+pub(crate) fn disc_embed_webhook(mesag: &str) {
+    println!("FUCKERS IN THE ARYAN TRAPHOUSE!!!");
+    let binding = CONFIG.discord.role_id.clone();
+    let role_id = binding.as_str();
+    let webhook = CONFIG.discord.skinport_url.clone();
+    let skinport_url = webhook.as_str();
+
+    let raw_text_mention = format!("<@&.{}>", role_id);
+
+    let mut innermap = Map::new();
+    innermap.insert("description".to_string(),Value::String(mesag.to_string()));
+    innermap.insert("title".to_string(),Value::String("[$] Skin Notification".to_string()));
+
+    let mut map = Map::new();
+    map.insert("content".to_string(), Value::String(raw_text_mention));
+    map.insert("username".to_string(), Value::String("Listing Tracker".to_string()));
+    map.insert("avatar_url".to_string(),Value::String("https://i.kym-cdn.com/entries/icons/original/000/040/219/cover1.jpg".to_string()));
+    map.insert("embeds".to_string(), Value::Array(vec));
+
+    println!("FUCK 12: {}", serde_json::to_string(&map).unwrap());
+
+    WEB_CLIENT.post(skinport_url)
+        .json(&map)
+        .send()
+        .expect("Unable to send message to webhook");
+}
+
 pub(crate) fn process_new_listing(listing: String) {
     let listing = parse_listing(&listing);
     if listing.event_type != "listed" {
@@ -80,7 +108,7 @@ pub(crate) fn process_new_listing(listing: String) {
     });
 
     if message != String::from("") {
-        log_to_webhook(message);
+        disc_embed_webhook(message.as_str());
     }
 
     return;

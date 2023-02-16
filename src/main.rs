@@ -7,6 +7,7 @@ mod item_processor;
 use tungstenite::{connect, Message};
 use url::Url;
 use crate::item_processor::process_new_listing;
+use crate::item_processor::disc_embed_webhook;
 use std::time::Instant;
 use std::path::PathBuf;
 use std::fs;
@@ -32,8 +33,9 @@ fn main() {
     debug_println!("Date: {}",chrono::offset::Local::now());
     debug_println!("Executed Path: {}",std::env::current_dir().expect("AAAAA").as_path().display().to_string());
 
-    //fs::create_dir("/logs").expect("hahha its fine :)");
     let config = config::read_config();
+
+    disc_embed_webhook("farted");
 
     let (mut socket, _response) =
         connect(Url::parse(&config.skinport.websocket_url)
