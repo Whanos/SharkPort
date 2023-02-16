@@ -22,3 +22,4 @@ config.toml
 
 .idea/**
 *.txt
+!2023-2-16+1_54_19.txt
