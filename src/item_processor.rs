@@ -75,7 +75,7 @@ pub(crate) fn disc_embed_webhook(mesag: &str) {
 
     let mut innermap = Map::new();
     innermap.insert("description".to_string(),Value::String(mesag.to_string()));
-    innermap.insert("title".to_string(),Value::String("[$] Skin Notification".to_string()));
+    innermap.insert("title".to_string(),Value::String("[$] Skin Notification [$]".to_string()));
 
     let vec_of_embed_obj: Vec<Value> = vec![Value::Object(innermap)];
 
