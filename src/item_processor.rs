@@ -141,16 +141,6 @@ fn check_listing_value(sale: &Sale) -> String {
         return "".to_string();
     }
 
-/*    if !item_stickers.is_empty() {
-        item_stickers.iter().for_each(|sticker_data| {
-            let sticker_name = sticker_data.clone().name;
-            if IMPORTANT_STICKERS.contains(&sticker_name.as_str()) {
-                kato_stickers.push(sticker_name);
-            }
-        });
-
-    }*/
-
     if should_buy != String::from("") {
         let msg = format!("[$] Item: `{}`\nListed Price: `£{}`\nSuggested Price: `£{}`\nPercentage: `%{}`\nLink: {}\n", item_name, list_price_in_pounds, suggested_price_in_pounds, should_buy, skinport_link);
         return msg;
